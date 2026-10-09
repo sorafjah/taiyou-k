@@ -71,8 +71,6 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 #labels{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
 .lbl{position:absolute;left:0;top:0;transform:translate(-50%,-100%);white-space:nowrap;font-size:15px;font-weight:700;padding:2px 8px;border-radius:8px;background:rgba(5,8,18,.6);color:var(--text);line-height:1.2}
 .lbl.sel{background:var(--sel);color:#06202e}
-.lbl small{display:block;font-size:11px;font-weight:400;color:var(--sub);text-align:center}
-.lbl.sel small{color:#06202e}
 
 /* 説明カード */
 #card{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 92px);width:340px;max-height:calc(100% - 200px);overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px}
@@ -83,12 +81,9 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 #card dt{color:var(--sub);white-space:nowrap}
 #card dd{margin:0;min-width:0}
 #card .big{font-size:19px;font-weight:700;color:var(--sun)}
-#card .ball{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,181,71,.1);border:1px solid rgba(255,181,71,.35);font-size:14px;line-height:1.75}
 #cardX{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:12px;border:0;background:rgba(255,255,255,.08);font-size:22px}
 
 /* 通過トースト */
-#toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:6;background:var(--panel-solid);border:2px solid var(--sun);border-radius:16px;padding:12px 22px;font-size:22px;font-weight:700;text-align:center;line-height:1.6;pointer-events:none;opacity:0;transition:opacity .4s}
-#toast.show{opacity:1}
 #loading{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);z-index:3;font-size:13px;color:var(--sub);background:var(--panel);padding:4px 10px;border-radius:8px}
 
 /* 説明画面 */
@@ -109,11 +104,10 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
   #modes button{min-width:0;padding:6px 10px;font-size:15px}
   #tool{top:calc(env(safe-area-inset-top,0px) + 76px)}
 }
-@media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
 <body>
-<!-- build: 2026-10-09c -->
+<!-- build: 2026-10-10 -->
 <canvas id="c"></canvas>
 <div id="labels"></div>
 
@@ -128,7 +122,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
     <button class="ibtn" id="helpBtn" aria-label="遊び方">？</button>
   </div>
 </div>
-<div id="ver">v2026-10-09c</div>
+<div id="ver">v2026-10-10</div>
 
 <div id="tool"></div>
 <div id="bar"></div>
@@ -137,13 +131,12 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
   <button id="cardX" aria-label="とじる">×</button>
   <div id="cardBody"></div>
 </div>
-<div id="toast"></div>
 <div id="loading">がぞうを よみこみ<ruby>中<rt>ちゅう</rt></ruby>…</div>
 
 <div id="help">
   <div id="helpBox">
     <h1><ruby>太陽系<rt>たいようけい</rt></ruby>の<ruby>大<rt>おお</rt></ruby>きさと きょり</h1>
-    <p class="lead"><ruby>太陽<rt>たいよう</rt></ruby>と 8つの<ruby>惑星<rt>わくせい</rt></ruby>を、<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>大<rt>おお</rt></ruby>きさと きょりの<ruby>比<rt>ひ</rt></ruby>で くらべよう。<ruby>上<rt>うえ</rt></ruby>のボタンで 3つのモードを えらべます。</p>
+    <p class="lead"><ruby>太陽<rt>たいよう</rt></ruby>と 8つの<ruby>惑星<rt>わくせい</rt></ruby>を、<ruby>大<rt>おお</rt></ruby>きさ・きょり・<ruby>回<rt>まわ</rt></ruby>る<ruby>速<rt>はや</rt></ruby>さで くらべよう。<ruby>上<rt>うえ</rt></ruby>のボタンで 3つのモードを えらべます。</p>
     <div class="hgrid">
       <div class="hcell">
         <svg viewBox="0 0 96 64"><circle cx="-20" cy="32" r="52" fill="#ffb547"/><circle cx="44" cy="40" r="3" fill="#6fa8ff"/><circle cx="58" cy="32" r="11" fill="#d9a77a"/><circle cx="80" cy="34" r="8" fill="#e8d3a2"/></svg>
@@ -153,7 +146,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
       <div class="hcell">
         <svg viewBox="0 0 96 64"><circle cx="8" cy="32" r="7" fill="#ffb547"/><circle cx="22" cy="32" r="2" fill="#6fa8ff"/><circle cx="46" cy="32" r="3.5" fill="#d9a77a"/><circle cx="88" cy="32" r="3" fill="#5b7fe0"/><line x1="16" y1="46" x2="88" y2="46" stroke="#a9b4cf" stroke-width="2" stroke-dasharray="4 3"/></svg>
         <b>きょり</b>
-        <span><ruby>本当<rt>ほんとう</rt></ruby>のきょりの<ruby>比<rt>ひ</rt></ruby>。<ruby>光<rt>ひかり</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さで<ruby>旅<rt>たび</rt></ruby>ができる。</span>
+        <span><ruby>本当<rt>ほんとう</rt></ruby>のきょりの<ruby>比<rt>ひ</rt></ruby>で ならべる。<ruby>惑星<rt>わくせい</rt></ruby>は<ruby>点<rt>てん</rt></ruby>で<ruby>見<rt>み</rt></ruby>える。</span>
       </div>
       <div class="hcell">
         <svg viewBox="0 0 96 64"><ellipse cx="48" cy="32" rx="40" ry="24" fill="none" stroke="#a9b4cf" stroke-width="1.5"/><ellipse cx="48" cy="32" rx="22" ry="13" fill="none" stroke="#a9b4cf" stroke-width="1.5"/><circle cx="48" cy="32" r="6" fill="#ffb547"/><circle cx="70" cy="32" r="3" fill="#6fa8ff"/><circle cx="20" cy="50" r="4" fill="#d9a77a"/></svg>
@@ -194,21 +187,17 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ===== 調整値 ===== */
 const CFG = {
-  ver: '20261009c',
+  ver: '20261010',
   texDir: 'textures/',
   // 単位：地球の半径 = 1
   kmPerUnit: 6371,
   sizeGap: 4,              // 大きさモードで天体どうしのすき間
   flyTime: 1.6,            // カメラ移動の秒数
-  revealTime: 3.8,         // 「太陽とくらべる」で引いていく秒数
-  ballCm: 24,              // 太陽をこの直径のボールにたとえる
   shinkansenKmh: 300,
   lightKms: 299792.458,
-  travelSpeeds: [60, 600], // 光の速さの何倍で再生するか
   orbitDaysPerSec: { slow: 8, mid: 60, fast: 365 },
   orbitR0: 12, orbitRk: 14, orbitSizeK: 0.8, orbitSunR: 6,
   spinBase: 0.35,
-  travelCam: { up: 30, side: 140, ahead: 600 },
 };
 
 /* ===== 天体データ（d: 直径km, au: 太陽からの平均距離, period: 公転日数） ===== */
@@ -400,15 +389,6 @@ SUN.far = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex('rgba(255,250
 SUN.far.scale.setScalar(0.06); SUN.group.add(SUN.far);
 SUN.dot.visible = false;
 
-// くらべる用の地球（大きさモード）
-const ghost = new THREE.Group();
-const ghostMesh = new THREE.Mesh(sphereGeo, EARTH.mesh.material);
-ghostMesh.rotation.z = THREE.MathUtils.degToRad(23.4);
-ghost.add(ghostMesh); scene.add(ghost);
-const ghostLabel = document.createElement('div'); ghostLabel.className = 'lbl';
-ghostLabel.innerHTML = 'くらべる<ruby>地球<rt>ちきゅう</rt></ruby>';
-document.getElementById('labels').appendChild(ghostLabel);
-
 // 公転モードの軌道と選択リング
 const orbitLines = new THREE.Group(); scene.add(orbitLines);
 for (const b of BODIES) {
@@ -417,14 +397,14 @@ for (const b of BODIES) {
   b.orbitLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: '#4a5a80', transparent: true, opacity: 0.8 }));
   orbitLines.add(b.orbitLine);
 }
-const selRing = new THREE.Mesh(new THREE.RingGeometry(1.25, 1.45, 48), new THREE.MeshBasicMaterial({ color: '#7fd3ff', side: THREE.DoubleSide, depthWrite: false, transparent: true }));
+const SEL_RING_T = 0.65, SEL_RING_GAP = 0.4; // 選択リングの太さ（どの星でも同じ）と、星からのすき間
+const selRing = new THREE.Mesh(new THREE.RingGeometry(1, 1 + SEL_RING_T, 64), new THREE.MeshBasicMaterial({ color: '#7fd3ff', side: THREE.DoubleSide, depthWrite: false, transparent: true }));
 scene.add(selRing);
 
 /* ===== 状態 ===== */
 const state = {
-  mode: 'size', selected: null, paused: true, compare: true, showCard: false, showNums: false,
+  mode: 'size', selected: null, paused: true, showCard: false, showNums: false,
   days: 0, orbitSpeed: 'mid', orbitRun: true,
-  travel: { on: false, x: 0, speedIdx: 0, passed: new Set() },
   fly: null, frames: 0, elapsed: 0,
 };
 const ORDER = ['mercury', 'venus', 'earth', 'moon', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'];
@@ -467,7 +447,6 @@ function layout() {
   ambient.intensity = m === 'size' ? 0.35 : (m === 'orbit' ? 0.45 : 0.12);
   camLight.visible = m === 'size';
   sunLight.visible = m !== 'size';
-  updateGhost();
 }
 function placeOrbit() {
   for (const b of BODIES) {
@@ -476,16 +455,6 @@ function placeOrbit() {
     b.group.position.set(Math.cos(a) * b.orbitR, 0, -Math.sin(a) * b.orbitR);
   }
 }
-function updateGhost() {
-  const b = state.selected;
-  const show = state.mode === 'size' && state.compare && b && b.id !== 'earth' && b.id !== 'moon';
-  ghost.visible = show; ghostLabel.hidden = !show;
-  if (!show) return;
-  // 選んだ天体の手前・下のほうに地球をおく
-  const r = b.ring ? b.rReal * b.ring[1] : b.rReal;
-  ghost.position.copy(b.group.position).add(new THREE.Vector3(0, -b.rReal * 0.55, r + 3));
-}
-
 /* ===== カメラ ===== */
 const tmp = new THREE.Vector3();
 function fitDist(radius) {
@@ -515,26 +484,17 @@ function homeView(dur) {
     flyTo(new THREE.Vector3(), viewFor(new THREE.Vector3(), byId.neptune.orbitR * 1.05, new THREE.Vector3(0, 0.75, 1)), dur, 8);
   }
 }
-function revealSun() {   // 大きさモード：太陽までふくめて全体を見る
-  const x0 = -SUN.rReal, x1 = sizeLastX;
-  const c = new THREE.Vector3((x0 + x1) / 2, 0, 0);
-  select(null);
-  flyTo(c, viewFor(c, (x1 - x0) / 2 * 1.02, new THREE.Vector3(0, 0.12, 1)), CFG.revealTime, 1);
-  blip(330, 0.4, 0.05);
-}
 function focusBody(b) {
   const m = state.mode, p = b.group.position;
   if (m === 'size') {
     let r = b.ring ? b.rReal * b.ring[1] : b.rReal;
     const c = p.clone();
-    if (ghost.visible) { c.lerp(ghost.position, 0.15); r = Math.max(r, c.distanceTo(ghost.position) + 1.2); }
     if (b === EARTH || b === MOON) { // 地球と月をいっしょに見せる
       c.copy(EARTH.group.position).lerp(MOON.group.position, 0.35);
       r = c.distanceTo(EARTH.group.position) + EARTH.rReal + 0.3;
     }
     flyTo(c, viewFor(c, r * 1.3, new THREE.Vector3(0.25, 0.22, 1)), CFG.flyTime, b.rReal * 1.1);
   } else if (m === 'dist') {
-    stopTravel();
     const r = b.ring ? b.rReal * b.ring[1] : b.rReal;
     // 昼の面が見える向きから近づく
     const dir = b.id === 'sun' ? new THREE.Vector3(0.5, 0.3, 1) : new THREE.Vector3(-0.35, 0.3, 1);
@@ -570,41 +530,33 @@ function fmtLen(mm) {
 }
 function cardHTML(b) {
   const ratio = b.d / EARTH_D, vol = ratio ** 3;
-  const ballMM = b.d / SUN.d * CFG.ballCm * 10;
   let sizeTxt = ratio >= 1.5
     ? `<span class="big">${ratio.toFixed(1)}<ruby>倍<rt>ばい</rt></ruby></span>（<ruby>地球<rt>ちきゅう</rt></ruby>が <b>${vol >= 1e4 ? Math.round(vol / 1e4).toLocaleString() + '<ruby>万<rt>まん</rt></ruby>' : Math.round(vol).toLocaleString()}こ</b> <ruby>入<rt>はい</rt></ruby>る）`
     : `<span class="big">${ratio.toFixed(2)}<ruby>倍<rt>ばい</rt></ruby></span>`;
   let rows = `<dt><ruby>直径<rt>ちょっけい</rt></ruby></dt><dd>${b.d.toLocaleString()}km</dd>
     <dt><ruby>地球<rt>ちきゅう</rt></ruby>とくらべて</dt><dd>${b.id === 'earth' ? '—' : sizeTxt}</dd>`;
-  let ball = `<ruby>太陽<rt>たいよう</rt></ruby>を<ruby>直径<rt>ちょっけい</rt></ruby>${CFG.ballCm}cmのボールにすると…<br>`;
-  if (b.id === 'sun') {
-    ball += `<ruby>地球<rt>ちきゅう</rt></ruby>は<b>${fmtLen(EARTH_D / SUN.d * CFG.ballCm * 10)}</b>（ごまつぶくらい）。<ruby>地球<rt>ちきゅう</rt></ruby>までは<b>${(AU_KM / SUN.d * CFG.ballCm / 100).toFixed(0)}m</b>はなれている。`;
-  } else if (b.id === 'moon') {
+  if (b.id === 'moon') {
     const km = b.moonKm;
     rows += `<dt><ruby>地球<rt>ちきゅう</rt></ruby>から</dt><dd>${fmtKm(km)}</dd>
       <dt><ruby>光<rt>ひかり</rt></ruby>で</dt><dd>${fmtLight(km / CFG.lightKms)}</dd>
       <dt><ruby>新幹線<rt>しんかんせん</rt></ruby>で</dt><dd>${fmtYears(km)}</dd>`;
-    ball += `<ruby>月<rt>つき</rt></ruby>は<b>${fmtLen(ballMM)}</b>、<ruby>地球<rt>ちきゅう</rt></ruby>から<b>${fmtLen(km / SUN.d * CFG.ballCm * 10)}</b>のところ。`;
-  } else {
+  } else if (b.id !== 'sun') {
     const km = b.au * AU_KM;
-    rows += `<dt><ruby>太陽<rt>たいよう</rt></ruby>から</dt><dd>${fmtKm(km)}（<ruby>地球<rt>ちきゅう</rt></ruby>の${b.au < 2 ? b.au.toFixed(2) : b.au.toFixed(1)}<ruby>倍<rt>ばい</rt></ruby>）</dd>
+    rows += `<dt><ruby>太陽<rt>たいよう</rt></ruby>から</dt><dd>${fmtKm(km)}</dd>
       <dt><ruby>光<rt>ひかり</rt></ruby>で</dt><dd><span class="big">${fmtLight(km / CFG.lightKms)}</span></dd>
       <dt><ruby>新幹線<rt>しんかんせん</rt></ruby>で</dt><dd>${fmtYears(km)}</dd>`;
-    const distM = km / SUN.d * CFG.ballCm / 100;
-    ball += `${nameRuby(b)}は<b>${fmtLen(ballMM)}</b>、<ruby>太陽<rt>たいよう</rt></ruby>から<b>${distM < 100 ? distM.toFixed(1) : Math.round(distM)}m</b>のところ。`;
   }
   rows += `<dt><ruby>自転<rt>じてん</rt></ruby></dt><dd>${rb(b.rot)}</dd>`;
   if (b.id !== 'sun') rows += `<dt><ruby>公転<rt>こうてん</rt></ruby></dt><dd>${rb(b.year)}</dd>`;
   rows += `<dt><ruby>温度<rt>おんど</rt></ruby></dt><dd>${rb(b.temp)}</dd>`;
   return `<h2><i style="background:${b.color}"></i>${nameRuby(b)}</h2>
-    <p class="note">${rb(b.note)}</p><dl>${rows}</dl><div class="ball">${ball}</div>`;
+    <p class="note">${rb(b.note)}</p><dl>${rows}</dl>`;
 }
 function select(b, move = true) {
   state.selected = b;
   for (const btn of barBtns) btn.classList.toggle('on', !!b && btn.dataset.id === b.id);
-  if (!b) { card.hidden = true; updateGhost(); return; }
+  if (!b) { card.hidden = true; return; }
   refreshCard(true);
-  updateGhost();
   if (move) focusBody(b);
   blip(520 + BODIES.indexOf(b) * 40);
 }
@@ -630,7 +582,7 @@ for (const b of BODIES) {
 /* ===== モード別パネル ===== */
 const tool = document.getElementById('tool');
 function togglesHTML(m) {
-  const num = m === 'size' ? '' : `<button class="tbtn tgl" id="numBtn" aria-pressed="${state.showNums}"><i></i><span><ruby>数字<rt>すうじ</rt></ruby></span></button>`;
+  const num = m !== 'orbit' ? '' : `<button class="tbtn tgl" id="numBtn" aria-pressed="${state.showNums}"><i></i><span><ruby>数字<rt>すうじ</rt></ruby></span></button>`;
   return `<div class="row"><button class="tbtn tgl" id="cardBtn" aria-pressed="${state.showCard}"><i></i><span><ruby>星<rt>ほし</rt></ruby>のせつめい</span></button>${num}</div>`;
 }
 function renderTool() {
@@ -643,24 +595,9 @@ function renderTool() {
 function renderToolBase() {
   const m = state.mode;
   if (m === 'size') {
-    tool.innerHTML = `<div class="row">
-      <button class="tbtn main" id="revealBtn"><ruby>太陽<rt>たいよう</rt></ruby>とくらべる</button>
-      <button class="tbtn ${state.compare ? 'on' : ''}" id="cmpBtn"><ruby>地球<rt>ちきゅう</rt></ruby>をならべる</button></div>
-      <div class="small"><ruby>大<rt>おお</rt></ruby>きさは<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>比<rt>ひ</rt></ruby>。きょりは ちぢめて ならべています。</div>`;
-    document.getElementById('revealBtn').onclick = () => { audioOn(); revealSun(); };
-    document.getElementById('cmpBtn').onclick = e => {
-      state.compare = !state.compare; e.currentTarget.classList.toggle('on', state.compare); updateGhost();
-      if (state.selected) focusBody(state.selected);
-    };
+    tool.innerHTML = `<div class="small"><ruby>大<rt>おお</rt></ruby>きさは<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>比<rt>ひ</rt></ruby>。きょりは ちぢめて ならべています。</div>`;
   } else if (m === 'dist') {
-    tool.innerHTML = `<div class="row">
-      <button class="tbtn main" id="travelBtn"></button>
-      <button class="tbtn" id="spdBtn"></button></div>
-      <div class="readout" id="travelInfo"></div>
-      <div class="small"><ruby>大<rt>おお</rt></ruby>きさも きょりも<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>比<rt>ひ</rt></ruby>。<ruby>惑星<rt>わくせい</rt></ruby>は<ruby>小<rt>ちい</rt></ruby>さすぎて<ruby>点<rt>てん</rt></ruby>にしか<ruby>見<rt>み</rt></ruby>えません。</div>`;
-    document.getElementById('travelBtn').onclick = () => { audioOn(); state.travel.on ? stopTravel() : startTravel(); };
-    document.getElementById('spdBtn').onclick = () => { state.travel.speedIdx = 1 - state.travel.speedIdx; updateTravelUI(); };
-    updateTravelUI();
+    tool.innerHTML = `<div class="small">きょりは<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>比<rt>ひ</rt></ruby>です。<ruby>惑星<rt>わくせい</rt></ruby>は<ruby>小<rt>ちい</rt></ruby>さすぎて<ruby>見<rt>み</rt></ruby>えないので、<ruby>点<rt>てん</rt></ruby>で<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>示<rt>しめ</rt></ruby>しています。<ruby>点<rt>てん</rt></ruby>の<ruby>大<rt>おお</rt></ruby>きさは<ruby>本当<rt>ほんとう</rt></ruby>ではありません。</div>`;
   } else {
     const sp = state.orbitSpeed;
     tool.innerHTML = `<div class="row">
@@ -674,60 +611,16 @@ function renderToolBase() {
     tool.querySelectorAll('[data-sp]').forEach(btn => btn.onclick = () => { state.orbitSpeed = btn.dataset.sp; renderTool(); });
   }
 }
-function updateTravelUI() {
-  const tb = document.getElementById('travelBtn'); if (!tb) return;
-  const t = state.travel;
-  tb.innerHTML = t.on ? 'とめる' : (t.x > 0 ? 'つづける' : '<ruby>光<rt>ひかり</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さで<ruby>出発<rt>しゅっぱつ</rt></ruby>');
-  document.getElementById('spdBtn').innerHTML = t.speedIdx === 0 ? 'はやさ：ふつう' : 'はやさ：<ruby>10倍<rt>ばい</rt></ruby>';
-}
-function travelReadout() {
-  const el = document.getElementById('travelInfo'); if (!el) return;
-  const km = Math.max(0, state.travel.x * CFG.kmPerUnit);
-  el.innerHTML = `<ruby>太陽<rt>たいよう</rt></ruby>から <b>${fmtKm(km)}</b><br>
-    <ruby>光<rt>ひかり</rt></ruby>で <b>${fmtLight(km / CFG.lightKms)}</b>　<ruby>新幹線<rt>しんかんせん</rt></ruby>で ${km > 0 ? fmtYears(km) : '—'}`;
-}
 function orbitReadout() {
   const el = document.getElementById('orbitInfo'); if (!el) return;
   const d = state.days;
   el.innerHTML = `<b>${Math.floor(d).toLocaleString()}</b><ruby>日<rt>にち</rt></ruby> たった（<ruby>地球<rt>ちきゅう</rt></ruby>は <b>${(d / 365.25).toFixed(1)}</b><ruby>周<rt>しゅう</rt></ruby>）`;
 }
 
-/* ===== 光の旅 ===== */
-function startTravel() {
-  const t = state.travel, endX = byId.neptune.group.position.x + 3000;
-  if (t.x <= 0 || t.x >= endX) { t.x = SUN.rReal; t.passed.clear(); }
-  t.on = true; controls.enabled = false; state.fly = null; select(null, false); updateTravelUI();
-}
-function stopTravel() {
-  const t = state.travel; if (!t.on) return;
-  t.on = false; controls.enabled = true; updateTravelUI();
-}
-const toast = document.getElementById('toast'); let toastT = 0;
-function showToast(html) { toast.innerHTML = html; toast.classList.add('show'); toastT = 2.6; }
-function stepTravel(dt) {
-  const t = state.travel, unitsPerSec = CFG.lightKms * CFG.travelSpeeds[t.speedIdx] / CFG.kmPerUnit;
-  t.x += unitsPerSec * dt;
-  for (const id of ORDER) {
-    if (id === 'moon') continue;
-    const b = byId[id];
-    if (!t.passed.has(id) && t.x >= b.group.position.x) {
-      t.passed.add(id); blip(780, 0.15, 0.06);
-      showToast(`${nameRuby(b)}に とうちゃく！<br><ruby>光<rt>ひかり</rt></ruby>で ${fmtLight(b.au * AU_KM / CFG.lightKms)}`);
-    }
-  }
-  const endX = byId.neptune.group.position.x + 3000;
-  if (t.x >= endX) { t.x = endX; stopTravel(); }
-  const c = CFG.travelCam;
-  camera.position.set(t.x - c.ahead * 0.25, c.up, c.side);
-  controls.target.set(t.x + c.ahead, 0, 0);
-  camera.lookAt(controls.target);
-}
-
 /* ===== モード切りかえ ===== */
 const modeBtns = document.querySelectorAll('#modes button');
 function setMode(m) {
-  stopTravel();
-  state.mode = m; state.travel.x = 0; state.travel.passed.clear();
+  state.mode = m;
   modeBtns.forEach(b => b.classList.toggle('on', b.dataset.mode === m));
   barBtns.forEach(b => b.hidden = m === 'orbit' && b.dataset.id === 'moon');
   layout(); renderTool();
@@ -737,7 +630,7 @@ function setMode(m) {
   if (keep) select(keep, m !== 'dist');
 }
 modeBtns.forEach(b => b.addEventListener('click', () => { audioOn(); blip(440); setMode(b.dataset.mode); }));
-document.getElementById('resetBtn').addEventListener('click', () => { audioOn(); stopTravel(); select(null, false); homeView(1.2); });
+document.getElementById('resetBtn').addEventListener('click', () => { audioOn(); select(null, false); homeView(1.2); });
 
 /* ===== タップで天体をえらぶ ===== */
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -746,7 +639,7 @@ canvas.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.client
 canvas.addEventListener('pointerup', e => {
   if (!down) return;
   const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dtt = performance.now() - down.t; down = null;
-  if (moved > 8 || dtt > 450 || state.travel.on) return;
+  if (moved > 8 || dtt > 450) return;
   ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   ray.setFromCamera(ndc, camera);
   const hit = ray.intersectObjects(pickables.filter(m => m.parent.parent.visible), false)[0];
@@ -766,7 +659,6 @@ function updateLabels() {
     proj.copy(b.group.position); proj.y += top;
     items.push({ el: b.label, b, p: proj.clone(), pri: b === state.selected ? 0 : (b.id === 'sun' ? 1 : 2) });
   }
-  if (ghost.visible) { proj.copy(ghost.position); proj.y += 1; items.push({ el: ghostLabel, p: proj.clone(), pri: 1 }); }
   items.sort((a, c) => a.pri - c.pri);
   for (const it of items) {
     const v = it.p.project(camera);
@@ -774,9 +666,7 @@ function updateLabels() {
     const x = (v.x + 1) / 2 * W, y = (1 - v.y) / 2 * H - 4;
     if (it.b) {
       const sel = it.b === state.selected;
-      const html = state.mode === 'dist' && it.b.id !== 'sun' && it.b.id !== 'moon'
-        ? `${nameRuby(it.b)}<small>${fmtLight(it.b.au * AU_KM / CFG.lightKms).replace(/<rt>[^<]*<\/rt>/g, '').replace(/<\/?ruby>/g, '')}</small>`
-        : nameRuby(it.b);
+      const html = nameRuby(it.b);
       if (it.el._h !== html) { it.el.innerHTML = html; it.el._h = html; }
       it.el.classList.toggle('sel', sel);
     }
@@ -800,9 +690,7 @@ function update(dt) {
       const sp = CFG.spinBase / Math.sqrt(Math.max(0.4, Math.abs(b.spinH) / 24)) * Math.sign(b.spinH);
       b.mesh.rotation.y += sp * dt;
     }
-    ghostMesh.rotation.y = EARTH.mesh.rotation.y;
     if (state.mode === 'orbit' && state.orbitRun) { state.days += CFG.orbitDaysPerSec[state.orbitSpeed] * dt; placeOrbit(); }
-    if (state.mode === 'dist' && state.travel.on) stepTravel(dt);
   }
   // カメラ移動
   if (state.fly) {
@@ -810,18 +698,23 @@ function update(dt) {
     const u = Math.min(1, f.t / f.dur), e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
     controls.target.lerpVectors(f.t0, f.t1, e);
     camera.position.lerpVectors(f.p0, f.p1, e);
-    if (u >= 1) { state.fly = null; controls.enabled = !state.travel.on; controls.minDistance = f.minDist; }
+    if (u >= 1) { state.fly = null; controls.enabled = true; controls.minDistance = f.minDist; }
   }
   // 公転モードで選んだ星についていく（目印）
   const sel = state.selected;
   selRing.visible = state.mode === 'orbit' && !!sel;
   if (selRing.visible) {
     selRing.position.copy(sel.group.position);
-    selRing.scale.setScalar(sel.ring ? sel.rOrbitView * sel.ring[1] : sel.rOrbitView * 1.3);
+    if (selRing.userData.id !== sel.id) { // 太さは星によらず同じ。内がわの半径だけ星に合わせる
+      const inner = (sel.ring ? sel.rOrbitView * sel.ring[1] : sel.rOrbitView) + SEL_RING_GAP;
+      selRing.geometry.dispose();
+      selRing.geometry = new THREE.RingGeometry(inner, inner + SEL_RING_T, 64);
+      selRing.userData.id = sel.id;
+    }
     selRing.quaternion.copy(camera.quaternion);
     if (sel.orbitLine) for (const b of BODIES) if (b.orbitLine) b.orbitLine.material.color.set(b === sel ? '#7fd3ff' : '#4a5a80');
   } else if (state.mode === 'orbit') for (const b of BODIES) if (b.orbitLine) b.orbitLine.material.color.set('#4a5a80');
-  if (!state.travel.on && controls.enabled) controls.update();
+  if (controls.enabled) controls.update();
   stars.position.copy(camera.position);
   // 大きさモードの光：カメラの左上から当てる
   camera.getWorldDirection(camDir);
@@ -834,8 +727,6 @@ function update(dt) {
     const px = b.rReal / d / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * innerHeight / 2;
     b.dot.visible = state.mode === 'dist' && px < 3;
   }
-  if (toastT > 0) { toastT -= dt; if (toastT <= 0) toast.classList.remove('show'); }
-  if (state.mode === 'dist') travelReadout();
   if (state.mode === 'orbit') orbitReadout();
 }
 
@@ -859,7 +750,7 @@ function loop(now) {
 
 /* ===== 説明画面 ===== */
 const help = document.getElementById('help');
-function openHelp() { help.hidden = false; state.paused = true; stopTravel(); }
+function openHelp() { help.hidden = false; state.paused = true; }
 function closeHelp() { audioOn(); help.hidden = true; state.paused = false; blip(600, 0.12); }
 document.getElementById('start').addEventListener('click', closeHelp);
 document.getElementById('helpBtn').addEventListener('click', openHelp);
@@ -870,17 +761,15 @@ homeView(0.01);
 requestAnimationFrame(loop);
 
 /* ===== テスト用フック =====
-   惑星は group.position で配置（大きさ／きょりモードは固定、公転モードは state.days から毎フレーム計算）。
-   光の旅は state.travel.x（地球の半径を1とした単位）でカメラを動かす。 */
+   惑星は group.position で配置（大きさ／きょりモードは固定、公転モードは state.days から毎フレーム計算）。 */
 window.__game = {
   CFG, state, bodies: BODIES, camera, controls, scene,
   get frames() { return state.frames; }, get elapsed() { return state.elapsed; },
   api: {
     tick(n = 1, dt = 1 / 60) { for (let i = 0; i < n; i++) update(dt); updateLabels(); renderer.render(scene, camera); },
-    getState: () => ({ mode: state.mode, selected: state.selected && state.selected.id, days: state.days, travelX: state.travel.x, travelOn: state.travel.on, paused: state.paused, showCard: state.showCard, showNums: state.showNums }),
+    getState: () => ({ mode: state.mode, selected: state.selected && state.selected.id, days: state.days, paused: state.paused, showCard: state.showCard, showNums: state.showNums }),
     start: closeHelp, openHelp, setShowCard, setShowNums,
-    setMode, select: id => select(id ? byId[id] : null), revealSun,
-    startTravel, stopTravel, setTravelSpeed: i => { state.travel.speedIdx = i; updateTravelUI(); },
+    setMode, select: id => select(id ? byId[id] : null),
     setOrbitSpeed: s => { state.orbitSpeed = s; renderTool(); },
     home: () => homeView(0.01),
   },
