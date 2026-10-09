@@ -39,7 +39,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 #top>*{pointer-events:auto}
 #modes{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
 #modes button{min-height:52px;min-width:88px;padding:6px 14px;border:0;border-radius:10px;background:transparent;font-size:17px;font-weight:700;color:var(--sub);line-height:1.2}
-#modes button.on{background:var(--sun);color:#24160a}
+#modes button.on{background:transparent;color:var(--text);box-shadow:inset 0 0 0 2px rgba(207,216,238,.75)}
 #topR{margin-left:auto;display:flex;gap:8px;align-items:flex-start}
 .ibtn{min-width:52px;min-height:52px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:15px;font-weight:700;padding:4px 12px;line-height:1.15}
 #helpBtn{font-size:26px;width:52px;padding:0}
@@ -48,9 +48,14 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 /* モードごとの操作パネル */
 #tool{position:fixed;left:12px;top:calc(env(safe-area-inset-top,0px) + 76px);z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;max-width:min(420px,calc(100% - 24px));display:flex;flex-direction:column;gap:8px}
 #tool .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.tbtn{min-height:48px;padding:6px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:16px;font-weight:700;line-height:1.25}
-.tbtn.main{background:var(--sun);color:#24160a;border-color:transparent}
-.tbtn.on{background:var(--sel);color:#06202e;border-color:transparent}
+.tbtn{min-height:48px;padding:6px 14px;border-radius:12px;border:1px solid var(--line);background:transparent;font-size:16px;font-weight:700;line-height:1.25}
+.tbtn.main{border-color:rgba(207,216,238,.6)}
+.tbtn.on{border-color:rgba(207,216,238,.85);box-shadow:inset 0 0 0 1px rgba(207,216,238,.85)}
+.tbtn.tgl{display:inline-flex;align-items:center;gap:8px}
+.tgl i{width:20px;height:20px;border-radius:6px;border:2px solid var(--sub);position:relative;flex:none}
+.tgl[aria-pressed="true"]{border-color:rgba(207,216,238,.85)}
+.tgl[aria-pressed="true"] i{border-color:var(--text)}
+.tgl[aria-pressed="true"] i::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--text);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
 .readout{font-size:15px;line-height:1.7;font-variant-numeric:tabular-nums}
 .readout b{font-size:20px;color:var(--sun)}
 .small{font-size:13px;color:var(--sub);line-height:1.6}
@@ -108,7 +113,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 </style>
 </head>
 <body>
-<!-- build: 2026-10-09b -->
+<!-- build: 2026-10-09c -->
 <canvas id="c"></canvas>
 <div id="labels"></div>
 
@@ -123,7 +128,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
     <button class="ibtn" id="helpBtn" aria-label="遊び方">？</button>
   </div>
 </div>
-<div id="ver">v2026-10-09b</div>
+<div id="ver">v2026-10-09c</div>
 
 <div id="tool"></div>
 <div id="bar"></div>
@@ -189,7 +194,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ===== 調整値 ===== */
 const CFG = {
-  ver: '20261009b',
+  ver: '20261009c',
   texDir: 'textures/',
   // 単位：地球の半径 = 1
   kmPerUnit: 6371,
@@ -417,7 +422,7 @@ scene.add(selRing);
 
 /* ===== 状態 ===== */
 const state = {
-  mode: 'size', selected: null, paused: true, compare: true,
+  mode: 'size', selected: null, paused: true, compare: true, showCard: false, showNums: false,
   days: 0, orbitSpeed: 'mid', orbitRun: true,
   travel: { on: false, x: 0, speedIdx: 0, passed: new Set() },
   fly: null, frames: 0, elapsed: 0,
@@ -598,12 +603,19 @@ function select(b, move = true) {
   state.selected = b;
   for (const btn of barBtns) btn.classList.toggle('on', !!b && btn.dataset.id === b.id);
   if (!b) { card.hidden = true; updateGhost(); return; }
-  cardBody.innerHTML = cardHTML(b); card.hidden = false; card.scrollTop = 0;
+  refreshCard(true);
   updateGhost();
   if (move) focusBody(b);
   blip(520 + BODIES.indexOf(b) * 40);
 }
-document.getElementById('cardX').addEventListener('click', () => select(null, false));
+function refreshCard(reset) {
+  const b = state.selected;
+  if (b && state.showCard) { cardBody.innerHTML = cardHTML(b); card.hidden = false; if (reset) card.scrollTop = 0; }
+  else card.hidden = true;
+}
+function setShowCard(v) { state.showCard = v; refreshCard(true); renderTool(); }
+function setShowNums(v) { state.showNums = v; renderTool(); }
+document.getElementById('cardX').addEventListener('click', () => setShowCard(false));
 
 /* ===== 下の天体ボタン ===== */
 const bar = document.getElementById('bar'), barBtns = [];
@@ -617,7 +629,18 @@ for (const b of BODIES) {
 
 /* ===== モード別パネル ===== */
 const tool = document.getElementById('tool');
+function togglesHTML(m) {
+  const num = m === 'size' ? '' : `<button class="tbtn tgl" id="numBtn" aria-pressed="${state.showNums}"><i></i><span><ruby>数字<rt>すうじ</rt></ruby></span></button>`;
+  return `<div class="row"><button class="tbtn tgl" id="cardBtn" aria-pressed="${state.showCard}"><i></i><span><ruby>星<rt>ほし</rt></ruby>のせつめい</span></button>${num}</div>`;
+}
 function renderTool() {
+  renderToolBase();
+  const ro = tool.querySelector('.readout'); if (ro) ro.hidden = !state.showNums;
+  tool.querySelector('.small').insertAdjacentHTML('beforebegin', togglesHTML(state.mode));
+  document.getElementById('cardBtn').onclick = () => setShowCard(!state.showCard);
+  const nb = document.getElementById('numBtn'); if (nb) nb.onclick = () => setShowNums(!state.showNums);
+}
+function renderToolBase() {
   const m = state.mode;
   if (m === 'size') {
     tool.innerHTML = `<div class="row">
@@ -854,8 +877,8 @@ window.__game = {
   get frames() { return state.frames; }, get elapsed() { return state.elapsed; },
   api: {
     tick(n = 1, dt = 1 / 60) { for (let i = 0; i < n; i++) update(dt); updateLabels(); renderer.render(scene, camera); },
-    getState: () => ({ mode: state.mode, selected: state.selected && state.selected.id, days: state.days, travelX: state.travel.x, travelOn: state.travel.on, paused: state.paused }),
-    start: closeHelp, openHelp,
+    getState: () => ({ mode: state.mode, selected: state.selected && state.selected.id, days: state.days, travelX: state.travel.x, travelOn: state.travel.on, paused: state.paused, showCard: state.showCard, showNums: state.showNums }),
+    start: closeHelp, openHelp, setShowCard, setShowNums,
     setMode, select: id => select(id ? byId[id] : null), revealSun,
     startTravel, stopTravel, setTravelSpeed: i => { state.travel.speedIdx = i; updateTravelUI(); },
     setOrbitSpeed: s => { state.orbitSpeed = s; renderTool(); },
