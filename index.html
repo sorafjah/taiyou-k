@@ -108,7 +108,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 </style>
 </head>
 <body>
-<!-- build: 2026-10-09 -->
+<!-- build: 2026-10-09b -->
 <canvas id="c"></canvas>
 <div id="labels"></div>
 
@@ -123,7 +123,7 @@ button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
     <button class="ibtn" id="helpBtn" aria-label="遊び方">？</button>
   </div>
 </div>
-<div id="ver">v2026-10-09</div>
+<div id="ver">v2026-10-09b</div>
 
 <div id="tool"></div>
 <div id="bar"></div>
@@ -189,7 +189,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ===== 調整値 ===== */
 const CFG = {
-  ver: '20261009',
+  ver: '20261009b',
   texDir: 'textures/',
   // 単位：地球の半径 = 1
   kmPerUnit: 6371,
@@ -232,7 +232,7 @@ const BODIES = [
   { id:'saturn', name:'土星', kana:'どせい', d:116460, au:9.537, period:10759, tex:'2k_saturn.jpg', color:'#e8d3a2', spinH:10.7, tilt:26.7, ring:[1.24, 2.27],
     rot:'{約|やく}11{時間|じかん}', year:'{約|やく}29{年|ねん}', temp:'{約|やく} −140℃',
     note:'{氷|こおり}と{岩|いわ}のつぶでできた{大|おお}きな{輪|わ}がある。{水|みず}にうくほど{軽|かる}い。' },
-  { id:'uranus', name:'天王星', kana:'てんのうせい', d:50724, au:19.19, period:30687, tex:'2k_uranus.jpg', color:'#9fd8df', spinH:-17.2, tilt:97.8,
+  { id:'uranus', name:'天王星', kana:'てんのうせい', d:50724, au:19.19, period:30687, tex:'2k_uranus.jpg', color:'#9fd8df', spinH:-17.2, tilt:97.8, ring:[1.6, 2.05],
     rot:'{約|やく}17{時間|じかん}', year:'{約|やく}84{年|ねん}', temp:'{約|やく} −200℃',
     note:'{横|よこ}だおしになって{回|まわ}っている。ガスと{氷|こおり}でできている。' },
   { id:'neptune', name:'海王星', kana:'かいおうせい', d:49244, au:30.07, period:60190, tex:'2k_neptune.jpg', color:'#4f74e0', spinH:16.1, tilt:28.3,
@@ -325,6 +325,14 @@ function dotTex() {
   return new THREE.CanvasTexture(c);
 }
 const DOT = dotTex();
+// 天王星の細い輪（内がわから 6・5・4・α・β・η・γ・δ・ε 環。半径は天王星の半径を1とした値）
+function uranusRingTex() {
+  const W = 1024, c = document.createElement('canvas'); c.width = W; c.height = 4;
+  const x = c.getContext('2d'), r0 = 1.6, r1 = 2.05;
+  const rings = [[1.637, 3, .6], [1.652, 3, .6], [1.666, 3, .6], [1.750, 4, .7], [1.787, 4, .7], [1.846, 3, .55], [1.863, 4, .7], [1.890, 4, .75], [2.001, 11, .95]];
+  for (const [r, w, a] of rings) { x.fillStyle = `rgba(205,220,230,${a})`; x.fillRect((r - r0) / (r1 - r0) * W - w / 2, 0, w, 4); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
 
 /* ===== 画像よみこみ ===== */
 const loadEl = document.getElementById('loading');
@@ -364,10 +372,13 @@ for (const b of BODIES) {
     const [ri, ro] = b.ring, g = new THREE.RingGeometry(ri, ro, 128, 1);
     const p = g.attributes.position, uv = g.attributes.uv, v = new THREE.Vector3();
     for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); uv.setXY(i, (v.length() - ri) / (ro - ri), 0.5); }
-    const rm = new THREE.MeshStandardMaterial({ color: '#cbb995', side: THREE.DoubleSide, transparent: true, opacity: 0.7, roughness: 1, depthWrite: false });
+    const rm = b.id === 'uranus'
+      // 本物はとても暗い輪だが、見えるように明るめにしている
+      ? new THREE.MeshBasicMaterial({ map: uranusRingTex(), side: THREE.DoubleSide, transparent: true, depthWrite: false })
+      : new THREE.MeshStandardMaterial({ color: '#cbb995', side: THREE.DoubleSide, transparent: true, opacity: 0.7, roughness: 1, depthWrite: false });
     b.ringMesh = new THREE.Mesh(g, rm); b.ringMesh.rotation.x = -Math.PI / 2;
     b.tiltG.add(b.ringMesh);
-    loadTex('2k_saturn_ring_alpha.png', t => { rm.map = t; rm.color.set(0xffffff); rm.opacity = 1; rm.needsUpdate = true; });
+    if (b.id === 'saturn') loadTex('2k_saturn_ring_alpha.png', t => { rm.map = t; rm.color.set(0xffffff); rm.opacity = 1; rm.needsUpdate = true; });
   }
   // 遠くからでも見える点
   b.dot = new THREE.Sprite(new THREE.SpriteMaterial({ map: DOT, color: b.color, sizeAttenuation: false, depthWrite: false, transparent: true }));
@@ -427,10 +438,14 @@ function layout() {
     SUN.group.position.set(0, 0, 0);
     let x = SUN.rReal + CFG.sizeGap * 3;
     for (const id of ORDER) {
+      if (id === 'moon') continue;
       const b = byId[id], ext = b.ring ? b.rReal * b.ring[1] : b.rReal;
       x += ext; b.group.position.set(x, 0, 0); x += ext + CFG.sizeGap;
     }
     sizeLastX = x;
+    // 月は惑星の列に入れず、地球の手前に寄りそわせる
+    const e = EARTH.group.position;
+    MOON.group.position.set(e.x + 1.3, -0.3, 1.0);
   } else if (m === 'dist') {
     const k = AU_KM / CFG.kmPerUnit;
     for (const b of BODIES) b.group.position.set(b.au * k, 0, 0);
@@ -508,6 +523,10 @@ function focusBody(b) {
     let r = b.ring ? b.rReal * b.ring[1] : b.rReal;
     const c = p.clone();
     if (ghost.visible) { c.lerp(ghost.position, 0.15); r = Math.max(r, c.distanceTo(ghost.position) + 1.2); }
+    if (b === EARTH || b === MOON) { // 地球と月をいっしょに見せる
+      c.copy(EARTH.group.position).lerp(MOON.group.position, 0.35);
+      r = c.distanceTo(EARTH.group.position) + EARTH.rReal + 0.3;
+    }
     flyTo(c, viewFor(c, r * 1.3, new THREE.Vector3(0.25, 0.22, 1)), CFG.flyTime, b.rReal * 1.1);
   } else if (m === 'dist') {
     stopTravel();
@@ -720,7 +739,7 @@ function updateLabels() {
   for (const b of BODIES) {
     if (!b.group.visible) { b.label.hidden = true; continue; }
     const r = (state.mode === 'orbit' ? b.rOrbitView : b.rReal);
-    const top = b.ring && state.mode !== 'size' ? r * 1.2 : r;
+    const top = r * (b.id === 'uranus' ? 2.1 : (b.ring && state.mode !== 'size' ? 1.2 : 1));
     proj.copy(b.group.position); proj.y += top;
     items.push({ el: b.label, b, p: proj.clone(), pri: b === state.selected ? 0 : (b.id === 'sun' ? 1 : 2) });
   }
